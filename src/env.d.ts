@@ -9,6 +9,7 @@ declare global {
         // interface Error {}
         interface Locals {
             user: Models.User<Models.Preferences> | undefined;
+            userData: any; // TODO: Replace 'any' with the actual type of your user data if available
         }
         // interface PageData {}
         // interface Platform {}
