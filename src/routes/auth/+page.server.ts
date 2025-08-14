@@ -40,7 +40,7 @@ export const actions = {
         cookies.set('session', session.secret, {
             sameSite: 'strict',
             expires: new Date(session.expire),
-            secure: true,
+            secure: true, // Debugging only
             path: '/'
         });
         return redirect(303, '/dashboard');

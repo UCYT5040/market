@@ -1,7 +1,10 @@
 <script lang="ts">
     import type {LayoutProps} from './$types';
+    import Nav from '$lib/components/Nav.svelte';
 
-    let {children}: LayoutProps = $props();
+    let {children, data}: LayoutProps = $props();
 </script>
+
+<Nav userName={data.userName}/>
 
 {@render children?.()}

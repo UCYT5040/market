@@ -7,13 +7,13 @@ export const load: LayoutServerLoad = async ({locals}) => {
         console.log('No session found, redirecting to auth...');
         return redirect(302, '/auth');
     }
-    console.log('Session found, fetching user account...');
     // Ensure the user has the `approved` label
     if (!locals.user.labels || !locals.user.labels.includes('approved')) {
         return redirect(302, '/approval');
     }
     console.log('User account fetched successfully:', locals.user.labels);
     return {
-        admin: locals.user.labels.includes('admin')
+        admin: locals.user.labels.includes('admin'),
+        userName: locals.user.name || 'User',
     };
 };
