@@ -39,6 +39,7 @@
 		"vite": "^7.0.4"
 	},
 	"dependencies": {
+		"@ericblade/quagga2": "^1.8.4",
 		"@lucide/svelte": "^0.536.0",
 		"appwrite": "^18.2.0",
 		"node-appwrite": "^17.2.0"
