@@ -9,12 +9,23 @@
         onScan: (code: string | null) => void;
     } = $props();
 
+    let detections: Record<string, number> = {};
+
     function onDetected(data: QuaggaJSResultObject) {
         const code = data.codeResult.code;
-        console.log('Barcode detected:', code);
-        onScan(code);
-        scanning = false;
-        Quagga.stop();
+        if (!code) {
+            return; // Ignore empty detections
+        }
+        if (!detections[code]) {
+            detections[code] = 1;
+        } else {
+            detections[code]++;
+        }
+        if (detections[code] > 3) {
+            onScan(code);
+            scanning = false;
+            Quagga.stop();
+        }
     }
 
     onMount(() => {
