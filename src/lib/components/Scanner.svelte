@@ -44,7 +44,8 @@
                 },
                 decoder: {
                     readers: [
-                        'upc_reader'
+                        'upc_reader',
+                        'upc_e_reader'
                     ]
                 }
             }).then(() => {
