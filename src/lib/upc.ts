@@ -5,6 +5,18 @@
  * @returns A 13-digit string representation of the barcode.
  */
 export function normalizeUPC(code: string | number): string {
-    const sanitizedCode = String(code).replace(/\D/g, '');
-    return sanitizedCode.padStart(13, '0');
+    let sanitizedCode = String(code).replace(/\D/g, '');
+    if (sanitizedCode.length > 13) {
+        // Remove leading zeros from the left
+        while (sanitizedCode.length > 13 && sanitizedCode[0] === '0') {
+            sanitizedCode = sanitizedCode.slice(1);
+        }
+        // If still too long, remove from the right
+        if (sanitizedCode.length > 13) {
+            sanitizedCode = sanitizedCode.slice(0, 13);
+        }
+    } else if (sanitizedCode.length < 13) {
+        sanitizedCode = sanitizedCode.padStart(13, '0');
+    }
+    return sanitizedCode;
 }
