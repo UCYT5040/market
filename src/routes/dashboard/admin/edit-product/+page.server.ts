@@ -2,13 +2,14 @@ import {serverClient} from '$lib/server/appwrite';
 import {Account} from 'node-appwrite';
 import type {Actions, PageServerLoad} from './$types';
 import {fail, redirect} from '@sveltejs/kit';
-import {collections, createDocument} from '$lib/server/database';
+import {collections, createDocument, updateDocument} from '$lib/server/database';
 import {normalizeUPC} from '$lib/upc';
 
 
 export const actions = {
     default: async ({request, cookies}) => {
         const formData = await request.formData();
+        const id = formData.get('id') as string;
         const name = (formData.get('name') as string).trim();
         const barcodes = formData.get('barcodes') as string;
         const localPrice = (formData.get('localPrice') as string).trim();
@@ -52,20 +53,20 @@ export const actions = {
 
         const normalizedBarcodes = barcodes.split(',').map(b => normalizeUPC(b.trim()));
 
-        const result = await createDocument(
-            collections.products, {
+        const result = await updateDocument(
+            collections.products, id, {
                 name: name,
                 barcodes: normalizedBarcodes,
                 localPrice: parseFloat(localPrice),
                 minPrice: parseFloat(minPrice),
                 maxPrice: parseFloat(maxPrice)
             }
-        )
+        );
 
         if (!result) {
             return fail(500, {
                 success: false,
-                message: 'Failed to create product.'
+                message: 'Failed to update product.'
             });
         }
 
