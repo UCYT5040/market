@@ -7,8 +7,14 @@ export async function handle({ event, resolve }) {
         const client = createUserClient();
         client.setSession(event.cookies.get('session') || '');
         const account = new Account(client);
-        event.locals.user = await account.get();
-        event.locals.userData = await getUserData(event.locals.user.$id);
+        const user = await account.get();
+        // event.locals.userData = await getUserData(event.locals.user.$id);
+        event.locals.user = {
+            approved: user.labels.includes("approved"),
+            admin: user.labels.includes("admin"),
+            name: user.name,
+            id: user.$id
+        };
     } catch (error) {
         console.error('Error fetching user account:', error);
         event.locals.user = undefined;

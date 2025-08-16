@@ -8,8 +8,12 @@ declare global {
     namespace App {
         // interface Error {}
         interface Locals {
-            user: Models.User<Models.Preferences> | undefined;
-            userData: any; // TODO: Replace 'any' with the actual type of your user data if available
+            user: {
+                approved: boolean,
+                admin: boolean,
+                name: string,
+                id: string
+            } | undefined;
         }
         // interface PageData {}
         // interface Platform {}
