@@ -1,4 +1,6 @@
-import {APPWRITE_COLLECTION_ID_USERS, APPWRITE_DATABASE_ID, APPWRITE_COLLECTION_ID_PRODUCTS, APPWRITE_COLLECTION_ID_PURCHASE_REPORTS} from '$env/static/private';
+import {APPWRITE_COLLECTION_ID_USERS, APPWRITE_DATABASE_ID, APPWRITE_COLLECTION_ID_PRODUCTS,
+    APPWRITE_COLLECTION_ID_PURCHASE_REPORTS, APPWRITE_COLLECTION_ID_PURCHASE_REPORT_ATTACHMENTS
+} from '$env/static/private';
 import {serverClient} from '$lib/server/appwrite';
 import {Databases, Query} from 'node-appwrite';
 
@@ -18,7 +20,8 @@ export const databaseId = APPWRITE_DATABASE_ID;
 export const collections = {
     users: APPWRITE_COLLECTION_ID_USERS,
     products: APPWRITE_COLLECTION_ID_PRODUCTS,
-    purchaseReports: APPWRITE_COLLECTION_ID_PURCHASE_REPORTS
+    purchaseReports: APPWRITE_COLLECTION_ID_PURCHASE_REPORTS,
+    purchaseReportAttachments: APPWRITE_COLLECTION_ID_PURCHASE_REPORT_ATTACHMENTS
 }
 
 // TODO: type the queries parameter
