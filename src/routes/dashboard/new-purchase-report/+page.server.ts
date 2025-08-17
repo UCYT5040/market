@@ -144,6 +144,6 @@ export const actions = {
             });
         }
 
-        return redirect(303, '/dashboard') // TODO: Redirect to purchase report viewer instead
+        return redirect(303, `/dashboard/purchase-report/${result.$id}`); // Redirect to the newly created report
     }
 } satisfies Actions;
