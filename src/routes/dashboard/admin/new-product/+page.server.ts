@@ -7,7 +7,14 @@ import {normalizeUPC} from '$lib/upc';
 
 
 export const actions = {
-    default: async ({request, cookies}) => {
+    default: async ({request, locals}) => {
+        if (!locals.user || !locals.user.admin) {
+            return fail(403, {
+                success: false,
+                message: 'You must be logged in and have admin privileges to create products.'
+            });
+        }
+
         const formData = await request.formData();
         const name = (formData.get('name') as string).trim();
         const barcodes = formData.get('barcodes') as string;

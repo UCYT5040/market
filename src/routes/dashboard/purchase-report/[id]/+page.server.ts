@@ -8,6 +8,13 @@ import {PreviewImage} from '$lib/previewImage';
 
 export const actions = {
     attachImage: async ({request, params, locals}) => {
+        if (!locals.user || !locals.user.approved) {
+            return fail(403, {
+                success: false,
+                message: 'You must be logged in and approved to attach images.'
+            });
+        }
+
         const formData = await request.formData();
         const file = formData.get('image') as Blob;
         if (!file || !(file instanceof Blob)) {
@@ -60,6 +67,13 @@ export const actions = {
         };
     },
     attachText: async ({request, params, locals}) => {
+        if (!locals.user || !locals.user.approved) {
+            return fail(403, {
+                success: false,
+                message: 'You must be logged in and approved to attach text.'
+            });
+        }
+
         // Get form data
         const formData = await request.formData();
         const text = formData.get('text') as string;
