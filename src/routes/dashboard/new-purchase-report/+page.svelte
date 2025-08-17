@@ -38,7 +38,7 @@
             // Add the product to the list
             products = [...products, {
                 name: data.product.name,
-                id: data.product.id,
+                id: data.product.$id,
                 price: 0,
                 minPrice: data.product.minPrice,
                 quantity: 1
@@ -63,7 +63,7 @@
             const data = await response.json();
             products = [...products, {
                 name: data.product.name,
-                id: data.id,
+                id: data.product.$id,
                 price: 0,
                 minPrice: data.product.minPrice,
                 quantity: 1

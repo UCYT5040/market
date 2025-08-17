@@ -1,7 +1,8 @@
 import type {Actions, PageServerLoad} from './$types';
 import {fail, redirect} from '@sveltejs/kit';
 import {getLocationTaxRates} from '$lib/server/ilTaxes';
-import {collections, createDocument} from '$lib/server/database';
+import {collections, createDocument, getDocument} from '$lib/server/database';
+import {normalizePrice} from '$lib/price';
 
 export const load: PageServerLoad = () => {
     return {
@@ -41,6 +42,7 @@ export const actions = {
 
         let totalPrice = 0;
         let taxlessPrice = 0;
+        let totalLocalPrice = 0; // Total if all products had been purchased at local price
 
         if (pricingType == 'total') {
             totalPrice = parseFloat((formData.get('totalPrice') as string).trim());
@@ -50,10 +52,15 @@ export const actions = {
                     message: 'Total price must be a valid positive number.'
                 });
             }
-            taxlessPrice = totalPrice / (1 + taxRate.taxRate);
+            totalPrice = normalizePrice(totalPrice);
+            taxlessPrice = normalizePrice(totalPrice / (1 + taxRate.taxRate));
         }
 
-        let quantities: Record<string, number> = {};
+        let itemsData: Record<string, {
+            quantity: number,
+            price: number // Estimated if pricingType is 'total', actual if 'item'
+        }> = {};
+        let localPrices: Record<string, number> = {}; // Store local prices for each product
 
         for (const product of products) {
             const quantity = parseInt(product.quantity);
@@ -63,16 +70,40 @@ export const actions = {
                     message: `Invalid quantity for product ${product.name}.`
                 });
             }
-            quantities[product.id] = quantity;
+            // Get local price
+            try {
+                const productData = await getDocument(collections.products, product.id);
+                totalLocalPrice += productData.localPrice * quantity;
+                localPrices[product.id] = productData.localPrice;
+            } catch (error) {
+                return fail(404, {
+                    success: false,
+                    message: `Product with ID ${product.id} not found.`
+                });
+            }
             if (pricingType === 'item') {
-                const itemPrice = parseFloat(product.price);
+                let itemPrice = parseFloat(product.price);
                 if (isNaN(itemPrice) || itemPrice <= 0) {
                     return fail(400, {
                         success: false,
                         message: `Invalid price for product ${product.name}.`
                     });
                 }
+                itemPrice = normalizePrice(itemPrice);
                 taxlessPrice += itemPrice * quantity;
+            }
+            const itemPrice = pricingType === 'item' ? parseFloat(product.price) : 0; // Added after all localPrice calculations for 'total' price
+            itemsData[product.id] = {
+                quantity: quantity,
+                price: normalizePrice(itemPrice)
+            };
+        }
+
+        // If 'total' pricing, estimate individual item prices based on local price
+        if (pricingType === 'total') {
+            for (const [productId, itemData] of Object.entries(itemsData)) {
+                itemsData[productId].price = normalizePrice(((localPrices[productId] || 0) * itemData.quantity) / totalLocalPrice * taxlessPrice);
+                console.log(`Estimated price for product ${productId}: ${itemsData[productId].price}`);
             }
         }
 
@@ -84,7 +115,7 @@ export const actions = {
         }
 
         if (pricingType === 'item') {
-            totalPrice = taxlessPrice * (1 + taxRate.taxRate);
+            totalPrice = normalizePrice(taxlessPrice * (1 + taxRate.taxRate));
         }
 
         if (!locals.user) { // Unexpected case
@@ -102,7 +133,7 @@ export const actions = {
                 taxLocation: taxRate.name,
                 taxCounty: taxRate.county,
                 taxRate: taxRate.taxRate,
-                purchasedItemsJSON: JSON.stringify(quantities)
+                purchasedItemsJSON: JSON.stringify(itemsData)
             }
         );
 
