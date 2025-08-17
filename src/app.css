@@ -1,7 +1,9 @@
 @import 'tailwindcss';
 
 @import '@skeletonlabs/skeleton';
+/*noinspection CssUnknownTarget*/
 @import '@skeletonlabs/skeleton/optional/presets';
+/*noinspection CssUnknownTarget*/
 @import '@skeletonlabs/skeleton/themes/cerberus';
 
 @source '../node_modules/@skeletonlabs/skeleton-svelte/dist';
