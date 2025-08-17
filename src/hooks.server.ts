@@ -20,5 +20,10 @@ export async function handle({ event, resolve }) {
         event.locals.user = undefined;
     }
 
+    // Require auth & approval on /dashboard endpoints
+    if (event.url.pathname.startsWith('/dashboard') && (!event.locals.user || !event.locals.user.approved)) {
+        return new Response('Unauthorized', { status: 401 });
+    }
+
     return resolve(event);
 }

@@ -5,6 +5,6 @@
     let {children, data}: LayoutProps = $props();
 </script>
 
-<Nav userName={data.userName}/>
+<Nav userName={data.username}/>
 
 {@render children?.()}

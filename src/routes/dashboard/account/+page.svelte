@@ -12,9 +12,9 @@
             Account Management
         </h1>
         <div class="flex justify-center items-center gap-4 preset-tonal p-4 rounded-lg">
-            <Avatar name={data.userName} />
+            <Avatar name={data.username} />
             <p class="text-xl font-semibold">
-                {data.userName}
+                {data.username}
             </p>
         </div>
     </div>
