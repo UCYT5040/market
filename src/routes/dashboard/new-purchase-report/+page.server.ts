@@ -6,7 +6,7 @@ import {normalizePrice} from '$lib/price';
 
 export const load: PageServerLoad = () => {
     return {
-        taxRates: getLocationTaxRates(true)
+        taxRates: getLocationTaxRates()
     };
 };
 
@@ -23,7 +23,7 @@ export const actions = {
         const pricingType = formData.get('pricingType') as ('item' | 'total');
         const products = JSON.parse(formData.get('products') as string);
         const taxRateIndex = parseInt(formData.get('taxRateIndex') as string);
-        const taxRates = getLocationTaxRates(true);
+        const taxRates = getLocationTaxRates();
         const taxRate = taxRates[taxRateIndex];
 
         if (!taxRate) {

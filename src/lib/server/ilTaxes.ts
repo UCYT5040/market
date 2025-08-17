@@ -17,11 +17,11 @@ function readFile() {
 export interface LocationTaxRate {
     name: string;
     county: string;
-    taxRate: number | Decimal;
+    taxRate: number;
     percent: string;
 }
 
-export function getLocationTaxRates(numerical: boolean = false): LocationTaxRate[] {
+export function getLocationTaxRates(): LocationTaxRate[] {
     // 10 chars, then 25 for location name, then 25 for county name
     // from the start again, 69 chars, then 5 for tax rate
     const data = readFile();
@@ -35,7 +35,7 @@ export function getLocationTaxRates(numerical: boolean = false): LocationTaxRate
             results.push({
                 name: locationName,
                 county: countyName,
-                taxRate: numerical ? taxRate.toNumber() : taxRate,
+                taxRate: taxRate.toNumber(),
                 percent: taxRate.mul(100).toString() + '%'
             });
         }
