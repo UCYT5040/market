@@ -37,13 +37,13 @@ export async function handle({ event, resolve }) {
 export const init: ServerInit = () => {
 	const job = new CronJob(
 		'0 0 * * *', // Runs at midnight daily
-		function () {
-			console.log('You will see this message every second');
+		async function () {
+			// TODO: Issue dividends before processing investments
+			await processMonetaryInvestments();
 		},
 		null,
 		true,
 		'America/Chicago'
 	);
 	processMonetaryInvestments();
-	console.log('Cron job initialized to process monetary investments daily at midnight');
 }
