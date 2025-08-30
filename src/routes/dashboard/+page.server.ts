@@ -10,6 +10,8 @@ export const load: PageServerLoad = async ({ locals }) => {
     return {
         ownership,
         balance: userData.balance,
+        monetaryInvestment: userData.monetaryInvestment,
+        sweatInvestment: userData.sweatInvestment,
         market: {
             balance: marketData.balance
         }

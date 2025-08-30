@@ -2,6 +2,7 @@
 	import { Tooltip } from '@skeletonlabs/skeleton-svelte';
 	import type { PageProps } from './$types';
 	import Money from '$lib/components/Money.svelte';
+	import { valueSweat } from '$lib/valueSweat';
 
 	let { data }: PageProps = $props();
 
@@ -39,11 +40,11 @@
 			<div class="flex gap-4">
 				<div>
 					<p class="text-small">Money</p>
-					<p class="text-xl font-semibold">$99.99</p>
+					<p class="text-xl font-semibold"><Money amount={data.monetaryInvestment} /></p>
 				</div>
 				<div>
 					<p class="text-small">Sweat</p>
-					<p class="text-xl font-semibold">1 unit</p>
+					<p class="text-xl font-semibold">{data.sweatInvestment} unit{data.sweatInvestment !== 1 ? 's' : ''}</p>
 					<Tooltip
 						open={sweatEquityTooltip}
 						onOpenChange={(e) => (sweatEquityTooltip = e.open)}
@@ -53,7 +54,7 @@
 						openDelay={200}
 						arrow
 					>
-						{#snippet trigger()}($7.25){/snippet}
+						{#snippet trigger()}(<Money amount={valueSweat(data.sweatInvestment)} />){/snippet}
 						{#snippet content()}For the purpose of ownership calculation, sweat equity is multiplied
 							by the federal minimum wage to determine it's value.{/snippet}
 					</Tooltip>
