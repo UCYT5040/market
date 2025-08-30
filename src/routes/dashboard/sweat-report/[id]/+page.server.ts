@@ -4,7 +4,7 @@ import { collections, createDocument, decrementDocumentAttribute, getDocument, i
 import { Query, Users } from 'node-appwrite';
 import { serverClient } from '$lib/server/appwrite';
 import { buckets, createFile } from '$lib/server/storage';
-import { PreviewImage } from '$lib/previewImage';
+import type { PreviewImage } from '$lib/previewImage';
 import { getUserData } from '$lib/server/user';
 import { getMarketData } from '$lib/server/market';
 
@@ -48,7 +48,7 @@ export const actions = {
 				report: params.id,
 				value: result.$id,
 				type: 'image',
-				user: locals.user.id
+				user: locals.user?.id
 			});
 		} catch (error) {
 			console.error('Failed to create attachment document:', error);
@@ -110,48 +110,27 @@ export const actions = {
 			});
 		}
 
-		/* Upon approval:
-		 * The user must be reimbursed for the report total
-		 * The company balance must be subtracted that amount
-		 */
-
-        const report = await getDocument(collections.purchaseReports, params.id);
+        const report = await getDocument(collections.sweatReports, params.id);
 
         const userData = await getUserData(locals.user.id);
 
-		const marketData = await getMarketData();
-
-        const userResult = await incrementDocumentAttribute(
+        const result = await incrementDocumentAttribute(
             collections.users,
             userData.$id,
-            'balance',
-            report.total
+            'sweatInvestment',
+            report.amount
         );
 
-        if (!userResult) {
+        if (!result) {
 			return fail(500, {
 				success: false,
-				message: 'Failed to update user balance.'
-			});
-		}
-
-		const marketResult = await decrementDocumentAttribute(
-			collections.market,
-			marketData.$id,
-			'balance',
-			report.total
-		);
-
-		if (!marketResult) {
-			return fail(500, {
-				success: false,
-				message: 'Failed to update market balance.'
+				message: 'Failed to update user sweat investment.'
 			});
 		}
 
 		// Mark this report as "approved"
 		try {
-			await updateDocument(collections.purchaseReports, report.$id, {
+			await updateDocument(collections.sweatReports, report.$id, {
 				status: 'approved'
 			});
 		} catch (error) {
@@ -162,7 +141,7 @@ export const actions = {
 			});
 		}
 	},
-	adminDeny: async ({ locals }) => {
+	adminDeny: async ({ params, locals }) => {
 		if (!locals.user?.admin) {
 			return fail(403, {
 				success: false,
@@ -190,52 +169,23 @@ export const actions = {
 
 export const load: PageServerLoad = async ({ params, locals }) => {
 	// TODO: Try/catch all database operations to handle errors gracefully
-	// TODO: Type purchasedItemsJSON
 	// TODO: Either use `report.` or use the spread + object, not both (leaning towards spread + object)
-	const report = await getDocument(collections.purchaseReports, params.id);
+	const report = await getDocument(collections.sweatReports, params.id);
 
 	if (!report) {
 		return fail(404, {
 			success: false,
-			message: 'Purchase report not found.'
+			message: 'Sweat report not found.'
 		});
 	}
 
-	// Check for attachments
+	// List the attachments
 	const attachments =
 		(await listDocuments(collections.reportAttachments, [
 			Query.equal('report', report.$id),
 			Query.orderAsc('$createdAt')
 		])) || [];
-	const items = JSON.parse(report.purchasedItemsJSON);
-	// Get item data
-	report.items = [];
-	let totalLocalPrice = 0; // Total if all products had been purchased at local price
-	for (const [productId, productData] of Object.entries(items)) {
-		const quantity = productData.quantity;
-		if (isNaN(quantity) || quantity <= 0) {
-			console.warn(`Invalid quantity for product ${productId} in report ${report.$id}:`, quantity);
-			continue; // Skip invalid quantities
-		}
-		try {
-			const product = await getDocument(collections.products, productId);
-			report.items.push({
-				...product,
-				price: productData.price, // Use price from productData
-				quantity: quantity
-			});
-			totalLocalPrice += product.localPrice * quantity;
-		} catch (error) {
-			console.error(`Failed to fetch product ${productId} for report ${report.$id}:`, error);
-			report.items.push({
-				$id: productId,
-				name: 'Unknown Product',
-				price: productData.price,
-				localPrice: 0,
-				quantity: quantity
-			});
-		}
-	}
+
 	// Get the user who created the report
 	const users = new Users(serverClient);
 	let username = 'Unknown User';
@@ -262,8 +212,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 		report: {
 			...report,
 			username: username,
-			attachments: attachments,
-			totalLocalPrice: totalLocalPrice
+			attachments: attachments
 		}
 	};
 };
