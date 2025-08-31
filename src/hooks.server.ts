@@ -32,6 +32,14 @@ export async function handle({ event, resolve }) {
 		return new Response('Unauthorized', { status: 401 });
 	}
 
+	// Require admin on /dashboard/admin endpoints
+	if (
+		event.url.pathname.startsWith('/dashboard/admin') &&
+		(!event.locals.user || !event.locals.user.admin)
+	) {
+		return new Response('Unauthorized', { status: 401 });
+	}
+
 	return resolve(event);
 }
 
