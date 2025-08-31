@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { AppBar, Avatar } from '@skeletonlabs/skeleton-svelte';
-	import { Apple, BadgeDollarSign, LayoutDashboard, Receipt, ScanBarcode } from '@lucide/svelte';
+	import { Apple, BadgeDollarSign, HandFist, LayoutDashboard, Receipt, ScanBarcode } from '@lucide/svelte';
 
 	const {
 		userName
@@ -30,6 +30,10 @@
 		<a href="/dashboard/scanner" class="flex items-center gap-2">
 			<ScanBarcode />
 			Scanner
+		</a>
+		<a href="/dashboard/invest" class="flex items-center gap-2">
+			<HandFist />
+			Invest
 		</a>
 	{/snippet}
 	{#snippet trail()}
