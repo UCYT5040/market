@@ -4,6 +4,7 @@ import { getUserData } from '$lib/server/user';
 import { CronJob } from 'cron';
 import { processMonetaryInvestments } from '$lib/server/processMonetaryInvestments';
 import type { ServerInit } from '@sveltejs/kit';
+import { processDividends } from '$lib/server/processDividends';
 
 export async function handle({ event, resolve }) {
 	try {
@@ -38,7 +39,7 @@ export const init: ServerInit = () => {
 	const job = new CronJob(
 		'0 0 * * *', // Runs at midnight daily
 		async function () {
-			// TODO: Issue dividends before processing investments
+			await processDividends();
 			await processMonetaryInvestments();
 		},
 		null,
@@ -46,4 +47,4 @@ export const init: ServerInit = () => {
 		'America/Chicago'
 	);
 	processMonetaryInvestments();
-}
+};
