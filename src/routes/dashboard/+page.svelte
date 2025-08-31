@@ -72,8 +72,9 @@
 		</div>
 		<div class="w-full max-w-md card preset-outlined-surface-500 p-4">
 			<h2 class="text-lg">Performance</h2>
-			<p class="text-3xl font-semibold">5 sales</p>
-			<p class="text-small">Top 10% of all members</p>
+			<p class="text-xs">In the last 7 days you made</p>
+			<p class="text-3xl font-semibold">{data.salesPerformance.count} sales</p>
+			<p class="text-small">You make up {data.salesPerformance.topPercent}% of recent sales</p>
 		</div>
 	</div>
 </div>
