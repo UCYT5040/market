@@ -10,6 +10,9 @@
 </script>
 
 <div class="flex h-screen w-full flex-col items-center justify-center">
+	{#if data.admin}
+		<a class="anchor text-red-500 mb-4" href="/dashboard/admin">Admin Dashboard</a>
+	{/if}
 	<div class="mb-8 flex w-full justify-center gap-4">
 		<div class="w-full max-w-md card preset-outlined-surface-500 p-4">
 			<h2 class="text-lg">Balance</h2>
