@@ -21,14 +21,13 @@ export const load: PageServerLoad = async ({url, locals}) => {
         Query.limit(10),
         Query.offset((page - 1) * 10),
         Query.orderDesc('$updatedAt'),
-        Query.equal('status', 'pending'),
         ...(includeAll ? [] : [Query.equal('user', locals.user.id)]),
         ...(status === 'all' ? [] : [Query.equal('status', status)])
     ]);
 
     for (const report of reports) {
         // Check for attachments
-        report.attachments = await listDocuments(collections.purchaseReportAttachments, [
+        report.attachments = await listDocuments(collections.reportAttachments, [
             Query.equal('report', report.$id),
             Query.orderAsc('$createdAt')
         ]) || [];

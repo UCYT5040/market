@@ -1,16 +1,55 @@
 <script lang="ts">
     import type {PageProps} from './$types';
     import {Avatar} from '@skeletonlabs/skeleton-svelte';
+    import { page } from '$app/state';
+	import { goto } from '$app/navigation';
 
     let {data}: PageProps = $props();
 
-    // TODO: Implement pagination
-    // TODO: Add filters
+    const params = page.url.searchParams;
+
+    let statusFilter = $state(params.get("status"));
+    let includeAll = $state(params.get("includeAll") === "true"); // If false, only include reports made by the current user
+    let pageNumberString = $state(params.get("page"));
+
+    let pageNumber = $derived(pageNumberString ? parseInt(pageNumberString) : 1);
+
+    const urlParamString = $derived.by(() => {
+        const params = new URLSearchParams();
+        if (statusFilter) params.set("status", statusFilter);
+        if (includeAll) params.set("includeAll", "true");
+        if (pageNumber > 1) params.set("page", pageNumber.toString());
+        const paramString = params.toString();
+        return paramString ? `?${paramString}` : '';
+    });
+
+    $effect(() => {
+        goto(urlParamString);
+    })
 </script>
 
 <h1 class="text-2xl font-bold mt-2 mb-6 text-center">
     Purchase Reports
 </h1>
+<div class="flex justify-center gap-4 mb-6">
+    <select bind:value={statusFilter} class="input preset-outlined-surface-500">
+        <option value="all" selected={statusFilter === 'all'}>All Statuses</option>
+        <option value="pending" selected={statusFilter === 'pending' || !statusFilter}>Pending</option>
+        <option value="approved" selected={statusFilter === 'approved'}>Approved</option>
+        <option value="denied" selected={statusFilter === 'denied'}>Denied</option>
+    </select>
+    <label class="flex items-center gap-2">
+        <input type="checkbox" bind:checked={includeAll} class="checkbox preset-outlined-surface-500" />
+        Include All Users
+    </label>
+</div>
+<div>
+    <p>Page {pageNumber}</p>
+    <div class="pagination">
+        <button onclick={() => pageNumber -= 1} disabled={pageNumber === 1}>Previous</button>
+        <button onclick={() => pageNumber += 1}>Next</button>
+    </div>
+</div>
 <div class="h-screen w-full grid grid-cols-3 gap-4 p-4 justify-items-center items-start">
     {#each data.reports as report}
         <div class="card p-4 preset-outlined-surface-500 w-full max-w-md">
