@@ -11,6 +11,9 @@
 			<li>
 				<a class="anchor" href="/dashboard/admin/new-adjustment">New Adjustment</a>
 			</li>
+			<li>
+				<a class="anchor" href="/dashboard/admin/approvals">User Approvals</a>
+			</li>
 		</ul>
 	</div>
 </div>
