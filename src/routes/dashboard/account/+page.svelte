@@ -17,5 +17,8 @@
                 {data.username}
             </p>
         </div>
+        <form method="POST" action="?/logout">
+            <button type="submit" class="btn preset-filled-error-500 w-full">Logout</button>
+        </form>
     </div>
 </div>
