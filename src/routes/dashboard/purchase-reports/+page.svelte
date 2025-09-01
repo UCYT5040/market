@@ -31,6 +31,11 @@
 <h1 class="text-2xl font-bold mt-2 mb-6 text-center">
     Purchase Reports
 </h1>
+<p>
+    <a class="anchor" href="/dashboard/new-purchase-report">
+        New report
+    </a>
+</p>
 <div class="flex justify-center gap-4 mb-6">
     <select bind:value={statusFilter} class="input preset-outlined-surface-500">
         <option value="all" selected={statusFilter === 'all'}>All Statuses</option>
