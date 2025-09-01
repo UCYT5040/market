@@ -1,38 +1,62 @@
-# sv
+# Market
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+"Market" is a platform for managing salespeople and investors for a decentralized marketplace.
 
-## Creating a project
+## About investing & dividends
 
-If you're seeing this, you've probably already done this step. Congrats!
+The market operates on a zero-profit model: any profits generated are distributed back to investors in the form of dividends.
 
-```sh
-# create a new project in the current directory
-npx sv create
+Investors can choose to reinvest their dividends to purchase additional ownership, potentially increasing their future returns.
 
-# create a new project in my-app
-npx sv create my-app
-```
+Dividends are issued daily at midnight. Any new investments are then processed after the dividend distribution.
 
-## Developing
+Users can invest monetarily or by contributing their skills and expertise to the marketplace ("sweat" investment).
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Adding funds
 
-```sh
-npm run dev
+The administrator should keep any funds on hand.
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+Users can then ask that the administrator deposit or withdraw funds to their balance.
 
-## Building
+Administrators should submit adjustments (from the admin dashboard) to update the user balances accordingly.
 
-To create a production version of your app:
+## Sales
 
-```sh
+Commissions can be earned on sales (commission rate for each user is set by the administrator).
+
+Products can be added from the admin dashboard.
+
+Each product also has a "local" price, which is the price at the local store. This is used to determine whether purchases users make are saving or costing the market.
+
+## Approval
+
+All new accounts require approval before they are able to access the dashboard.
+
+## Setup
+
+### Appwrite
+
+You'll need [Appwrite](https://appwrite.io) (either self-hosted or cloud).
+
+Then copy the `example.appwrite.config.json` file to `appwrite.config.json` and use the [Appwrite CLI](https://appwrite.io/docs/tooling/command-line/installation) to set up your project.
+
+### .env
+
+Copy the contents of `.env.example` to `.env` and update the values with your Appwrite project settings.
+
+### Building
+
+```shell
+npm install
 npm run build
 ```
 
-You can preview the production build with `npm run preview`.
+### Running
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+```shell
+node run build
+```
+
+### Configure
+
+See the [Svelte Node Adapter Documentation on environment variables](https://svelte.dev/docs/kit/adapter-node#Environment-variables) for configuration options.
